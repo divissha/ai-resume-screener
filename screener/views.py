@@ -50,7 +50,7 @@ def upload_resume(request):
 
         missing = missing_skills(resume_skills, jd_skills)
 
-        explanation = generate_explanation(final_score,missing)
+        explanation = generate_explanation(resume_skills,missing)
 
         missing_percent = missing_skill_percentage(resume_skills,jd_skills)
 
@@ -80,6 +80,7 @@ def upload_resume(request):
             "missing_percent": missing_percent,
             "explanation": explanation,
             "score_status": score_status,
+            "explanation": explanation,
         })
 
     return render(request, "screener/upload.html")
