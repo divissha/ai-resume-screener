@@ -10,6 +10,9 @@ from .services.feedback import generate_feedback, skill_advice
 
 from .services.explanation import generate_explanation
 
+from django.http import FileResponse
+from .services.report import generate_pdf
+
 from .services.matcher import (
     match_score,
     missing_skills,
@@ -23,7 +26,19 @@ def upload_resume(request):
 
     if request.method == "POST":
 
-        resume = request.FILES['resume']
+        resume = request.FILES["resume"]
+        # text = extract_text(resume)
+
+        # files = request.FILES.getlist("resume")
+        # scores=[]
+        # for file in files:
+        #     text = extract_text(file)
+        #     score = semantic_score(text,jd_text)
+        #     scores.append({"name":file.name,"score":score})
+            
+        #     scores.sort(key=lambda x:x["score"],
+        #                 reverse=True)
+            
         jd_text = request.POST['job_description']
 
         file_path = os.path.join(settings.MEDIA_ROOT, resume.name)
@@ -57,6 +72,13 @@ def upload_resume(request):
         feedback = generate_feedback(final_score, missing)
         advice = skill_advice(missing)
 
+        matched = list(set(resume_skills) & set(jd_skills))
+
+        request.session["score"] = final_score
+        request.session["matched"] = matched
+        request.session["missing"] = missing
+        request.session["explanation"] = explanation
+
         if final_score >= 80:
             score_status = "Excellent Match"
         elif final_score >= 60:
@@ -81,9 +103,34 @@ def upload_resume(request):
             "explanation": explanation,
             "score_status": score_status,
             "explanation": explanation,
+            "matched": matched,
+            # "rankings":scores,
         })
 
     return render(request, "screener/upload.html")
+
+def download_report(request):
+
+    score = request.session.get("score")
+
+    matched = request.session.get("matched")
+
+    missing = request.session.get("missing")
+
+    explanation = request.session.get("explanation")
+
+    pdf = generate_pdf(
+        score,
+        matched,
+        missing,
+        explanation
+    )
+
+    return FileResponse(
+        pdf,
+        as_attachment=True,
+        filename="resume_report.pdf"
+    )
 
 
 
