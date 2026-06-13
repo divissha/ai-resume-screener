@@ -13,6 +13,15 @@ from .services.explanation import generate_explanation
 from django.http import FileResponse
 from .services.report import generate_pdf
 
+from .services.role_recommender import recommend_roles
+from .services.section_analyzer import analyze_sections
+from .services.readability import readability_score, readability_feedback
+from .services.project_recommender import recommend_projects
+
+from .services.semantic_suggestions import (
+    get_semantic_suggestions
+)
+
 from .services.matcher import (
     match_score,
     missing_skills,
@@ -49,9 +58,13 @@ def upload_resume(request):
 
         # TEXT
         resume_text = extract_text(file_path)
+        sections = analyze_sections(resume_text)
+        readability = readability_score(resume_text,sections)
+        readability_message = readability_feedback(readability)
 
         # SKILLS
         resume_skills = extract_skills(resume_text)
+        recommended_roles = recommend_roles(resume_skills)
         jd_skills = extract_skills(jd_text.lower())
 
         # OLD SCORE (skill-based)
@@ -64,6 +77,9 @@ def upload_resume(request):
         final_score = round((skill_score + ai_score) / 2, 2)
 
         missing = missing_skills(resume_skills, jd_skills)
+
+        projects = recommend_projects(missing)
+        semantic_suggestions = (get_semantic_suggestions(missing))
 
         explanation = generate_explanation(resume_skills,missing)
 
@@ -104,6 +120,12 @@ def upload_resume(request):
             "score_status": score_status,
             "explanation": explanation,
             "matched": matched,
+            "recommended_roles": recommended_roles,
+            "sections": sections,
+            "readability": readability,
+            "readability_message": readability_message,
+            "projects": projects,
+            "semantic_suggestions": semantic_suggestions,
             # "rankings":scores,
         })
 
