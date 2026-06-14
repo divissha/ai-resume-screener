@@ -1,0 +1,25 @@
+<h1>My Resume Analyses</h1>
+
+{% for analysis in analyses %}
+
+<div>
+
+    <h3>
+        Score: {{ analysis.score }}%
+    </h3>
+
+    <p>
+        Matched:
+        {{ analysis.matched_skills }}
+    </p>
+
+    <p>
+        Missing:
+        {{ analysis.missing_skills }}
+    </p>
+
+    <hr>
+
+</div>
+
+{% endfor %}

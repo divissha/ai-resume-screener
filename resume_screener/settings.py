@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'screener',
     'tailwind',
     'theme',
+    'accounts',
 ]
 
 MIDDLEWARE = [

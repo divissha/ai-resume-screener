@@ -17,6 +17,7 @@ from .services.role_recommender import recommend_roles
 from .services.section_analyzer import analyze_sections
 from .services.readability import readability_score, readability_feedback
 from .services.project_recommender import recommend_projects
+from .models import ResumeAnalysis
 
 from .services.semantic_suggestions import (
     get_semantic_suggestions
@@ -27,6 +28,9 @@ from .services.matcher import (
     missing_skills,
     missing_skill_percentage
 )
+
+from django.contrib.auth.decorators import login_required
+from .models import ResumeAnalysis
 
 
 def upload_resume(request):
@@ -109,6 +113,13 @@ def upload_resume(request):
         print("RESUME SKILLS:", resume_skills)
         print("MISSING:", missing)
 
+        if request.user.is_authenticated:
+            ResumeAnalysis.objects.create(
+                user=request.user,
+                score=final_score,
+                matched_skills=", ".join(matched),
+                missing_skills=", ".join(missing),)
+
         return render(request, "screener/result.html", {
             "score": final_score,
             "missing": missing,
@@ -152,6 +163,22 @@ def download_report(request):
         pdf,
         as_attachment=True,
         filename="resume_report.pdf"
+    )
+
+
+@login_required
+def history(request):
+
+    analyses = ResumeAnalysis.objects.filter(
+        user=request.user
+    ).order_by("-created_at")
+
+    return render(
+        request,
+        "screener/history.html",
+        {
+            "analyses": analyses
+        }
     )
 
 

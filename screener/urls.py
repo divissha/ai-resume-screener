@@ -9,4 +9,9 @@ urlpatterns = [
     "download/",
     views.download_report,
     name="download"),
+
+    path(
+    "history/",
+    views.history,
+    name="history"),
 ]

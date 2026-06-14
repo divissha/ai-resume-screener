@@ -2,19 +2,27 @@
 
 A Django-based AI Resume Screening application that:
 
-- Uploads PDF resumes
-- Extracts resume text
-- Matches resume against job descriptions
-- Calculates ATS-style scores
-- Identifies missing skills
-- Generates improvement suggestions
+- PDF Resume Upload
+- ATS Match Score Calculation
+- Skill Extraction & Matching
+- Missing Skill Detection
+- AI Resume Explanation
+- Role Recommendation Engine
+- Resume Structure Analysis
+- ATS Readability Score
+- Suggested Learning Projects
+- Semantic Skill Suggestions
+- Interactive Dashboard Charts
+- Downloadable PDF Reports
 
 ## Tech Stack
 
-- Django
-- PyMuPDF
-- Sentence Transformers
 - Python
+- Django
+- Tailwind CSS
+- PyMuPDF
+- Chart.js
+- ReportLab
 
 ## Features
 
