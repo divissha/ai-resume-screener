@@ -18,6 +18,7 @@ from .services.section_analyzer import analyze_sections
 from .services.readability import readability_score, readability_feedback
 from .services.project_recommender import recommend_projects
 from .models import ResumeAnalysis
+from .services.semantic_matcher import semantic_score
 
 from .services.semantic_suggestions import (
     get_semantic_suggestions
@@ -62,6 +63,7 @@ def upload_resume(request):
 
         # TEXT
         resume_text = extract_text(file_path)
+        semantic_ats_score = semantic_score(resume_text,jd_text)
         sections = analyze_sections(resume_text)
         readability = readability_score(resume_text,sections)
         readability_message = readability_feedback(readability)
@@ -137,6 +139,7 @@ def upload_resume(request):
             "readability_message": readability_message,
             "projects": projects,
             "semantic_suggestions": semantic_suggestions,
+            "semantic_score": semantic_ats_score,
             # "rankings":scores,
         })
 

@@ -1,25 +1,65 @@
-<h1>My Resume Analyses</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>History</title>
+</head>
+<body>
+    <div class="max-w-6xl mx-auto p-8">
 
-{% for analysis in analyses %}
+    <h1 class="text-4xl font-bold mb-8">
+        My Resume Analyses
+    </h1>
 
-<div>
+    <div class="bg-white shadow-lg rounded-xl overflow-hidden">
 
-    <h3>
-        Score: {{ analysis.score }}%
-    </h3>
+        <table class="w-full">
 
-    <p>
-        Matched:
-        {{ analysis.matched_skills }}
-    </p>
+            <thead class="bg-gray-100">
 
-    <p>
-        Missing:
-        {{ analysis.missing_skills }}
-    </p>
+                <tr>
+                    <th class="p-4 text-left">Date</th>
+                    <th class="p-4 text-left">ATS Score</th>
+                    <th class="p-4 text-left">Matched Skills</th>
+                    <th class="p-4 text-left">Missing Skills</th>
+                </tr>
 
-    <hr>
+            </thead>
+
+            <tbody>
+
+                {% for analysis in analyses %}
+
+                <tr class="border-b">
+
+                    <td class="p-4">
+                        {{ analysis.created_at|date:"M d, Y" }}
+                    </td>
+
+                    <td class="p-4 font-bold text-indigo-600">
+                        {{ analysis.score }}%
+                    </td>
+
+                    <td class="p-4">
+                        {{ analysis.matched_skills }}
+                    </td>
+
+                    <td class="p-4">
+                        {{ analysis.missing_skills }}
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
 
 </div>
-
-{% endfor %}
+</body>
+</html>
