@@ -24,6 +24,8 @@
                     <th class="p-4 text-left">ATS Score</th>
                     <th class="p-4 text-left">Matched Skills</th>
                     <th class="p-4 text-left">Missing Skills</th>
+                    <th class="p-4 text-left">Semantic Score</th>
+                    <th class="p-4 text-left">Recommended Role</th>
                 </tr>
 
             </thead>
@@ -48,6 +50,14 @@
 
                     <td class="p-4">
                         {{ analysis.missing_skills }}
+                    </td>
+
+                    <td class="p-4">
+                        {{ analysis.semantic_score|floatformat:2 }}%
+                    </td>
+
+                    <td class="p-4">
+                        {{ analysis.recommended_role }}
                     </td>
 
                 </tr>

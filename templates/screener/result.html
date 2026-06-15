@@ -10,7 +10,7 @@
 
 {% block content %}
 {% comment %} <div class="min-h-screen flex items-center justify-center"> {% endcomment %}
-<div class="max-w-7xl mx-auto px-6 py-6">
+<div class="max-w-7xl mx-auto px-4 py-5">
     
 
 <div class="card bg-white rounded-2xl p-6 shadow-[0_0_20px_rgba(0,0,0,0.12)]">
@@ -21,13 +21,49 @@
 
 
 
-    <p class="ml-8 text-lg text-gray-700 mb-3">
+    {% comment %} <p class="ml-8 text-lg text-gray-700 mb-3">
         {{ feedback }}
-    </p>
-<div class="grid grid-cols-2 gap-6 mb-1 mt-1">
+    </p> {% endcomment %}
+<div class="grid grid-cols-3 gap-6 mb-1 mt-1">
     <div class="bg-white rounded-2xl shadow-[0_0_20px_rgba(0,0,0,0.12)] p-6 mt-1 mb-3">
 
-    <h2 class="text-2xl font-bold mb-2 ml-12">
+        <h2 class="text-xl font-bold mb-7">
+        Candidate Profile
+    </h2>
+
+    <div class="space-y-3">
+
+        <p>
+            <strong>Name:</strong>
+            {{ name }}
+        </p>
+
+        <p>
+            <strong>Email:</strong>
+            {{ email }}
+        </p>
+
+        <p>
+            <strong>Phone:</strong>
+            {{ phone }}
+        </p>
+
+        <p>
+            <strong>GitHub:</strong>
+            {{ github }}
+        </p>
+
+        <p>
+            <strong>LinkedIn:</strong>
+            {{ linkedin }}
+        </p>
+
+    </div>
+    </div>
+
+    
+    <div class="bg-white rounded-2xl shadow-[0_0_20px_rgba(0,0,0,0.12)] p-6 text-center mt-1 mb-3">
+        <h2 class="text-xl font-bold mb-2">
         Skill Match Overview
     </h2>
 
@@ -86,7 +122,7 @@ data:[
 
 
 
-<div class="bg-white rounded-2xl shadow-[0_0_20px_rgba(0,0,0,0.12)] p-6 text-center my-auto">
+<div class="bg-white rounded-2xl shadow-[0_0_20px_rgba(0,0,0,0.12)] p-6 text-center mt-1 mb-3">
 
     <h3 class="font-bold mb-2">
         ATS Readability

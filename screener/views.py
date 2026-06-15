@@ -30,6 +30,14 @@ from .services.matcher import (
     missing_skill_percentage
 )
 
+from .services.profile_extractor import (
+    extract_name,
+    extract_email,
+    extract_phone,
+    extract_github,
+    extract_linkedin,
+)
+
 from django.contrib.auth.decorators import login_required
 from .models import ResumeAnalysis
 
@@ -63,6 +71,11 @@ def upload_resume(request):
 
         # TEXT
         resume_text = extract_text(file_path)
+        name = extract_name(resume_text)
+        email = extract_email(resume_text)
+        phone = extract_phone(resume_text)
+        github = extract_github(resume_text)
+        linkedin = extract_linkedin(resume_text)
         semantic_ats_score = semantic_score(resume_text,jd_text)
         sections = analyze_sections(resume_text)
         readability = readability_score(resume_text,sections)
@@ -116,11 +129,13 @@ def upload_resume(request):
         print("MISSING:", missing)
 
         if request.user.is_authenticated:
-            ResumeAnalysis.objects.create(
-                user=request.user,
-                score=final_score,
-                matched_skills=", ".join(matched),
-                missing_skills=", ".join(missing),)
+             ResumeAnalysis.objects.create(
+                 user=request.user,
+                 score=final_score,
+                 semantic_score=semantic_ats_score,
+                 recommended_role=recommended_roles[0],
+                 matched_skills=", ".join(matched),
+                 missing_skills=", ".join(missing),)
 
         return render(request, "screener/result.html", {
             "score": final_score,
@@ -140,6 +155,10 @@ def upload_resume(request):
             "projects": projects,
             "semantic_suggestions": semantic_suggestions,
             "semantic_score": semantic_ats_score,
+            "name": name,
+            "email": email,"phone": phone,
+            "github": github,
+            "linkedin": linkedin,
             # "rankings":scores,
         })
 
