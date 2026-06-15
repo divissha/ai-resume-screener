@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-0gj)69j6w+%*qacj%ove0q@$(jv5oe0m1i8))vf_pw57cpucbs
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -48,6 +48,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -132,4 +133,8 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 TAILWIND_APP_NAME = 'theme'
+
+STATIC_URL = "static/"
+
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
