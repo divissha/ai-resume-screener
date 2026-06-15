@@ -41,6 +41,12 @@ SECRET_KEY = 'django-insecure-0gj)69j6w+%*qacj%ove0q@$(jv5oe0m1i8))vf_pw57cpucbs
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
+import os
+
+ALLOWED_HOSTS = os.environ.get(
+    "ALLOWED_HOSTS",
+    "localhost,127.0.0.1,ai-resume-screener.up.railway.app"
+).split(",")
 
 
 # Application definition
