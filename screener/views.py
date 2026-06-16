@@ -122,16 +122,29 @@ def upload_resume(request):
             print("RESUME SKILLS:", resume_skills)
             print("MISSING:", missing)
 
+
             if request.user.is_authenticated:
-                ResumeAnalysis.objects.create(
-                    user=request.user,
-                    score=final_score,
-                    semantic_score=float(semantic_ats_score),
-                    recommended_role=recommended_roles(
-                        recommended_roles[0]
-                        if recommended_roles
-                        else "Not Available"),
-                    recommended_role=recommended_roles,matched_skills=", ".join(matched),missing_skills=", ".join(missing),)
+                 recommended_role = (
+                      recommended_roles[0]
+                      if recommended_roles
+                      else "Not Available")
+                 
+                 
+                 ResumeAnalysis.objects.create(
+                     user=request.user,
+                     score=final_score,
+                     semantic_score=float(semantic_ats_score),recommended_role=recommended_role,matched_skills=", ".join(matched),missing_skills=", ".join(missing),)
+
+
+                # ResumeAnalysis.objects.create(
+                #     user=request.user,
+                #     score=final_score,
+                #     semantic_score=float(semantic_ats_score),
+                #     recommended_role=recommended_roles(
+                #         recommended_roles[0]
+                #         if recommended_roles
+                #         else "Not Available"),
+                #     recommended_role=recommended_roles,matched_skills=", ".join(matched),missing_skills=", ".join(missing),)
                 
 
                 
