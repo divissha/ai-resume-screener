@@ -53,6 +53,12 @@ def upload_resume(request):
             
             jd_text = request.POST['job_description']
 
+            # Create media folder if it doesn't exist
+            os.makedirs(
+                settings.MEDIA_ROOT,
+                exist_ok=True
+            )
+
             file_path = os.path.join(settings.MEDIA_ROOT, resume.name)
 
             with open(file_path, "wb+") as f:
