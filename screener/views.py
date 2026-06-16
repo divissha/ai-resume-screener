@@ -47,120 +47,122 @@ def upload_resume(request):
     
 
     if request.method == "POST":
-
-        resume = request.FILES["resume"]
-        # text = extract_text(resume)
-
-        # files = request.FILES.getlist("resume")
-        # scores=[]
-        # for file in files:
-        #     text = extract_text(file)
-        #     score = semantic_score(text,jd_text)
-        #     scores.append({"name":file.name,"score":score})
+        try:
             
-        #     scores.sort(key=lambda x:x["score"],
-        #                 reverse=True)
+            resume = request.FILES["resume"]
             
-        jd_text = request.POST['job_description']
+            jd_text = request.POST['job_description']
 
-        file_path = os.path.join(settings.MEDIA_ROOT, resume.name)
+            file_path = os.path.join(settings.MEDIA_ROOT, resume.name)
 
-        with open(file_path, "wb+") as f:
-            for chunk in resume.chunks():
-                f.write(chunk)
+            with open(file_path, "wb+") as f:
+                for chunk in resume.chunks():
+                    f.write(chunk)
 
-        # TEXT
-        resume_text = extract_text(file_path)
-        name = extract_name(resume_text)
-        email = extract_email(resume_text)
-        phone = extract_phone(resume_text)
-        github = extract_github(resume_text)
-        linkedin = extract_linkedin(resume_text)
-        semantic_ats_score = semantic_score(resume_text,jd_text)
-        sections = analyze_sections(resume_text)
-        readability = readability_score(resume_text,sections)
-        readability_message = readability_feedback(readability)
+            print("FILE PATH:", file_path)
+            print("FILE EXISTS:", os.path.exists(file_path))
 
-        # SKILLS
-        resume_skills = extract_skills(resume_text)
-        recommended_roles = recommend_roles(resume_skills)
-        jd_skills = extract_skills(jd_text.lower())
+            # TEXT
+            resume_text = extract_text(file_path)
+            name = extract_name(resume_text)
+            email = extract_email(resume_text)
+            phone = extract_phone(resume_text)
+            github = extract_github(resume_text)
+            linkedin = extract_linkedin(resume_text)
+            semantic_ats_score = semantic_score(resume_text,jd_text)
+            sections = analyze_sections(resume_text)
+            readability = readability_score(resume_text,sections)
+            readability_message = readability_feedback(readability)
 
-        # OLD SCORE (skill-based)
-        skill_score = match_score(resume_skills, jd_skills)
 
-        # AI SCORE (semantic)
-        ai_score = semantic_score(resume_text, jd_text)
+            # SKILLS
+            resume_skills = extract_skills(resume_text)
+            recommended_roles = recommend_roles(resume_skills)
+            jd_skills = extract_skills(jd_text.lower())
 
-        # FINAL SCORE (blend both)
-        final_score = round((skill_score + ai_score) / 2, 2)
+            # OLD SCORE (skill-based)
+            skill_score = match_score(resume_skills, jd_skills)
 
-        missing = missing_skills(resume_skills, jd_skills)
+            # AI SCORE (semantic)
+            ai_score = semantic_ats_score
 
-        projects = recommend_projects(missing)
-        semantic_suggestions = (get_semantic_suggestions(missing))
+            # FINAL SCORE (blend both)
+            final_score = round((skill_score + ai_score) / 2, 2)
 
-        explanation = generate_explanation(resume_skills,missing)
+            missing = missing_skills(resume_skills, jd_skills)
 
-        missing_percent = missing_skill_percentage(resume_skills,jd_skills)
+            projects = recommend_projects(missing)
+            semantic_suggestions = (get_semantic_suggestions(missing))
 
-        feedback = generate_feedback(final_score, missing)
-        advice = skill_advice(missing)
+            explanation = generate_explanation(resume_skills,missing)
 
-        matched = list(set(resume_skills) & set(jd_skills))
+            missing_percent = missing_skill_percentage(resume_skills,jd_skills)
 
-        request.session["score"] = final_score
-        request.session["matched"] = matched
-        request.session["missing"] = missing
-        request.session["explanation"] = explanation
+            feedback = generate_feedback(final_score, missing)
+            advice = skill_advice(missing)
 
-        if final_score >= 80:
-            score_status = "Excellent Match"
-        elif final_score >= 60:
-            score_status = "Good Match"
-        elif final_score >= 40:
-            score_status = "Average Match"
-        else:
-            score_status = "Low Match"
+            matched = list(set(resume_skills) & set(jd_skills))
 
-        print("JD TEXT:", jd_text)
-        print("JD SKILLS:", jd_skills)
-        print("RESUME SKILLS:", resume_skills)
-        print("MISSING:", missing)
+            request.session["score"] = final_score
+            request.session["matched"] = matched
+            request.session["missing"] = missing
+            request.session["explanation"] = explanation
 
-        if request.user.is_authenticated:
-             ResumeAnalysis.objects.create(
-                 user=request.user,
-                 score=final_score,
-                 semantic_score=semantic_ats_score,
-                 recommended_role=recommended_roles[0],
-                 matched_skills=", ".join(matched),
-                 missing_skills=", ".join(missing),)
+            if final_score >= 80:
+                score_status = "Excellent Match"
+            elif final_score >= 60:
+                score_status = "Good Match"
+            elif final_score >= 40:
+                score_status = "Average Match"
+            else:
+                score_status = "Low Match"
 
-        return render(request, "screener/result.html", {
-            "score": final_score,
-            "missing": missing,
-            "matched": resume_skills,
-            "feedback": feedback,
-            "advice": advice,
-            "missing_percent": missing_percent,
-            "explanation": explanation,
-            "score_status": score_status,
-            "explanation": explanation,
-            "matched": matched,
-            "recommended_roles": recommended_roles,
-            "sections": sections,
-            "readability": readability,
-            "readability_message": readability_message,
-            "projects": projects,
-            "semantic_suggestions": semantic_suggestions,
-            "semantic_score": semantic_ats_score,
-            "name": name,
-            "email": email,"phone": phone,
-            "github": github,
-            "linkedin": linkedin,
-            # "rankings":scores,
-        })
+            print("JD TEXT:", jd_text)
+            print("JD SKILLS:", jd_skills)
+            print("RESUME SKILLS:", resume_skills)
+            print("MISSING:", missing)
+
+            if request.user.is_authenticated:
+                ResumeAnalysis.objects.create(
+                    user=request.user,
+                    score=final_score,
+                    semantic_score=float(semantic_ats_score),
+                    recommended_role=recommended_roles(
+                        recommended_roles[0]
+                        if recommended_roles
+                        else "Not Available"),
+                    recommended_role=recommended_roles,matched_skills=", ".join(matched),missing_skills=", ".join(missing),)
+                
+
+                
+            return render(request, "screener/result.html", {
+                "score": final_score,
+                "missing": missing,
+                "matched": resume_skills,
+                "feedback": feedback,
+                "advice": advice,
+                "missing_percent": missing_percent,
+                "explanation": explanation,
+                "score_status": score_status,
+                "explanation": explanation,
+                "matched": matched,
+                "recommended_roles": recommended_roles,
+                "sections": sections,
+                "readability": readability,
+                "readability_message": readability_message,
+                "projects": projects,
+                "semantic_suggestions": semantic_suggestions,
+                "semantic_score": semantic_ats_score,
+                "name": name,
+                "email": email,"phone": phone,
+                "github": github,
+                "linkedin": linkedin,
+                # "rankings":scores,
+            })
+
+        except Exception as e:
+            print("ERROR:", str(e))
+            raise
 
     return render(request, "screener/upload.html")
 
