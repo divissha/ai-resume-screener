@@ -38,7 +38,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-0gj)69j6w+%*qacj%ove0q@$(jv5oe0m1i8))vf_pw57cpucbs'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 # ALLOWED_HOSTS = ["*"]
 import os
@@ -47,6 +47,10 @@ ALLOWED_HOSTS = [
     "ai-resume-screener.up.railway.app",
     "localhost",
     "127.0.0.1",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://ai-resume-screener.up.railway.app",
 ]
 
 
